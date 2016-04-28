@@ -10,71 +10,72 @@ ERROR CASES: Return NULL for invalid inputs.
 
 NOTES: If there are no common words return NULL.
 */
-
-#include <stdio.h>
 #include <malloc.h>
-#define SIZE 31
 #include <string.h>
-char ** commonWords(char *str1, char *str2) {
-	if (str1 == NULL || str2 == NULL)
-	   return NULL;
-	else {
-		char **common;
-		char strarr1[10][20] = { "" };
-		char strarr2[10][20] = { "" };
-		char str[20] = "";
-		int i = 0;
-		int k = 0, j = 0;
-		int pos = 0;
-		int len1, len2;
-		while (str1[i] != '\0'){
-			if (str1[i] == ' '){
-				pos = i - 1;
-				for (i = 0; i <= pos; i++){
-					strarr1[j][k++] = str1[i];
-				}
-				strarr1[j][k] = '\0';
-				j++;
-				i += pos + 1;
-				printf("i:%d", i);
-			}
 
-			else{
-				printf("\nin else");
-				i++;
-			}
-		}
-		len1 = j;
-		for (int i = 0; i < len1; i++)
-			printf("%s", strarr1[i]);
-		i = 0;
-		j = 0;
-		k = 0;
-		while (str2){
-			pos = 0;
-			if (str2[i] == ' '){
-				pos = i - 1;
-				for (i = 0; i < pos; i++){
-					strarr2[j][k++] += str2[i];
-				}
-				j++;
-				i = pos + 1;
-			}
-			else
-				i++;
-		}
-		int min;
-		len2 = j;
-		if (len1 < len2)
-			min = len1;
-		else
-			min = len2;
-		int t = 0;
-		for (int c = 0; c < min; c++){
-			strarr1[c] == strarr2[c];
-			common[t] = strarr1[c];
-			t++;
-		}
-		return common;
-	}
+#define SIZE 31
+
+int hasspaces(char *str){
+	int spaces = 0, i = 0;
+	for (i = 0; str[i] != '\0'; i++)
+		if (str[i] == 32)
+			spaces++;
+	if ((spaces - i) == 0)
+		return 1;
+	else
+		return 0;
 }
+char **commonWords(char *str1, char *str2) {
+	if (str1 == NULL || str2 == NULL)
+		return NULL;
+	if (hasspaces(str1))
+		return NULL;
+	if (hasspaces(str2))
+		return NULL;
+	char tok_str1[100][100];
+	int words_count_1, words_count_2;
+	int i = 0;
+	char **output = (char**)malloc(100 * sizeof(char *));;
+	int k = 0;
+	char tok_str2[100][100];
+	for (int j = 0; str1[j] != '\0'; j++){
+		if (str1[j] != ' ')
+			tok_str1[i][k++] = str1[j];
+		else
+		{
+			tok_str1[i][k++] = '\0';
+			i++;
+			k = 0;
+		}
+	}
+	tok_str1[i][k++] = '\0';
+	words_count_1 = i > 0 ? i + 1 : i;
+	i = 0; k = 0;
+	for (int j = 0; str2[j] != '\0'; j++){
+		if (str2[j] != ' ')
+			tok_str2[i][k++] = str2[j];
+		else
+		{
+			tok_str2[i][k++] = '\0';
+			i++;
+			k = 0;
+		}
+	}
+	tok_str2[i][k++] = '\0';
+	words_count_2 = i > 0 ? i + 1 : i;
+	int t = 0;
+	for (i = 0; i <= words_count_1; i++){
+		for (int j = 0; j <= words_count_2; j++){
+			if (strcmp(tok_str1[i], tok_str2[j]) == 0){
+				output[t] = (char*)malloc(100 * sizeof(char));
+				output[t++] = tok_str1[i];
+			}
+		}
+	}
+	output[t] = '\0';
+	if (t == 0)
+		return NULL;
+	else
+		return output;
+}
+
